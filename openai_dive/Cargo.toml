@@ -14,6 +14,7 @@ reqwest = { version = "0.12", optional = true, default-features = false, feature
     "stream",
     "multipart",
 ] }
+# reqwest-eventsource was forked to remove Content-Type check (and it can't be propagated via `patch` because every package would need to define its own `patch`)
 reqwest-eventsource = { git = "https://github.com/DenisGorbachev/reqwest-eventsource", optional = true }
 reqwest-websocket = { version = "0.4", optional = true }
 futures = { version = "0.3", optional = true }
