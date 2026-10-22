@@ -13,6 +13,8 @@ use super::{
 };
 use crate::v1::resources::shared::ReasoningEffort;
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "stream")]
+use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
@@ -201,6 +203,12 @@ pub enum OutputContent {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(tag = "type")]
 pub enum ResponseStreamEvent {
+    #[serde(rename = "response.metadata")]
+    ResponseMetadata {
+        sequence_number: u32,
+        response_id: String,
+        metadata: HashMap<String, Value>,
+    },
     // Response lifecycle events
     /// response.created - A new response was created
     #[serde(rename = "response.created")]
@@ -641,6 +649,7 @@ impl ResponseStreamEvent {
     /// Get the SSE event name for this event
     pub fn event_name(&self) -> &'static str {
         match self {
+            Self::ResponseMetadata { .. } => "response.metadata",
             Self::ResponseCreated { .. } => "response.created",
             Self::ResponseQueued { .. } => "response.queued",
             Self::ResponseInProgress { .. } => "response.in_progress",
